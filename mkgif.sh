@@ -13,11 +13,14 @@ mkgif() {
     wait
 
     echo Converting the video to gif
-	ffmpeg -v warning -i $inputFileName -vf "$filters,palettegen" -y $palette
-	ffmpeg -v warning -i $inputFileName -i $palette -lavfi "$filters [x]; [x][1:v] paletteuse" -y $outputFileName
+	ffmpeg -v error -i $inputFileName -vf "$filters,palettegen" -y $palette
+	ffmpeg -v error -i $inputFileName -i $palette -lavfi "$filters [x]; [x][1:v] paletteuse" -y $outputFileName
 	
 	echo Removing the temporary file
 	rm -f $inputFileName
+
+    echo
+	echo $outputFileName has been created
 }
 
 for fileName in "$@"
