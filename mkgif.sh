@@ -16,6 +16,7 @@ capture() {
 		echo Creating the video $1 from the current simulator
 	fi
 
+echo $inputFileName
     xcrun simctl io booted recordVideo --type=mp4 $inputFileName
     wait
     convert $inputFileName
@@ -23,7 +24,7 @@ capture() {
     if "$verbose" = true; then
     	echo Removing the temporary file
     fi
-    # rm -f $inputFileName
+    rm -f $inputFileName
 }
 
 convert() {
@@ -31,14 +32,13 @@ convert() {
 	filters="fps=15,scale=320:-1:flags=lanczos"
 	inputFileName="$1" 
 	outputFileName="${inputFileName%.*}".gif
-	echo $outputFileName
 
     if "$verbose" = true; then
     	echo Converting $inputFileName to gif file
 	fi
 
-	ffmpeg -v error -i $inputFileName -vf "$filters,palettegen" -y $palette
-	ffmpeg -v error -i $inputFileName -i $palette -lavfi "$filters [x]; [x][1:v] paletteuse" -y $outputFileName
+	ffmpeg -v error -i "$inputFileName" -vf "$filters,palettegen" -y $palette
+	ffmpeg -v error -i "$inputFileName" -i $palette -lavfi "$filters [x]; [x][1:v] paletteuse" -y "$outputFileName"
 
 	echo $outputFileName has been created
 }
@@ -81,7 +81,6 @@ do
         break
         ;;
     *)  
-		shift
         capture "$1"
 		break
 	    ;;
